@@ -191,6 +191,14 @@ func NewClient(conf *ClientConfiguration) (mc *ModbusClient, err error) {
 	return
 }
 
+func (mc *ModbusClient) OpenFrom(conn net.Conn) {
+	mc.lock.Lock()
+	defer mc.lock.Unlock()
+
+	// create the TCP transport
+	mc.transport = newTCPTransport(conn, mc.conf.Timeout)
+}
+
 // Opens the underlying transport (network socket or serial line).
 func (mc *ModbusClient) Open() (err error) {
 	var spw		*serialPortWrapper
